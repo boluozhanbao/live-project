@@ -82,8 +82,8 @@ namespace VBAInExcel
         {
             StreamReader sr = new StreamReader(path, Encoding.Default);
             String line;
-            string message = "";
-            Message tmp = new Message();
+            int flag = 0;
+            string time = "", name = "", num = "", message = "";
             while ((line = sr.ReadLine()) != null)
             {
 
@@ -92,23 +92,33 @@ namespace VBAInExcel
                 Match m = r.Match(line.ToString());
                 if (m.Value.ToString() != "")
                 {
-
-                    //tmp.SetQcontent(message);
-                    //messages.Add(tmp);
-                    Message mess = new Message();
-                    mess.SetQtime(m.Result("${time}"));
-                    mess.SetQname(m.Result("${name}"));
-                    mess.SetQnum(m.Result("${num}"));
-                    tmp = mess;
-                    mess.SetQcontent(message);
-                    messages.Add(mess);
+                    if (flag > 0)
+                    {
+                        Message mess = new Message();
+                        mess.SetQtime(time);
+                        mess.SetQname(name);
+                        mess.SetQnum(num);
+                        mess.SetQcontent(message);
+                        mess.SetQcontent(message);
+                        messages.Add(mess);
+                    }
+                    time = m.Result("${time}");
+                    name = m.Result("${name}");
+                    num = m.Result("${num}");
                     message = "";
+                    flag++;
                 }
                 else
                 {
                     message += line;
                 }
             }
+            Message less = new Message();
+            less.SetQtime(time);
+            less.SetQname(name);
+            less.SetQnum(num);
+            less.SetQcontent(message);
+            messages.Add(less);
         }
     }
     //文件过滤
